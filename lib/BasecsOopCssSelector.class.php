@@ -28,6 +28,11 @@ class BasecsOopCssSelector
     $this->_selector = ($args[0] != null) ? $args[0] : null;
   }
   
+  public function setSelector($value='')
+  {
+    $this->_selector = $value;
+  }
+  
   public function getSelector()
   {
     return $this->_selector;
@@ -96,12 +101,26 @@ class BasecsOopCssSelector
   
   public function __toString()
   {
-    $out = $this->_selector." {\n";
+    if($this->_selector != null)
+    {
+      $out = $this->_selector." {\n";
+      $out .= $this->stylesToString();
+      $out .= "}";
+      return $out;
+    }
+    else
+    {
+      return '';
+    }
+  }
+  
+  public function stylesToString()
+  {
+    $out = '';
     foreach($this->_styles as $s)
     {
       $out .= $s."\n";
     }
-    $out .= "}";
     return $out;
   }
   

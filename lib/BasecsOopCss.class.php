@@ -40,6 +40,14 @@ class BasecsOopCss
       $this->_selectors[$args[0]] = $selector;
       return true;
     }
+    if(is_array($args[0]))
+    {
+      $selector = new csOopCssSelector(implode(', ', $args[0]));
+      foreach($args[0] as $s)
+      {
+        $this->_selectors[$args[0]] = $selector;
+      }
+    }
     elseif(get_class($args[0]) == 'csOopCssSelector')
     {
       $this->_selectors[$args[0]->getSelector()] = $args[0];
@@ -93,7 +101,32 @@ class BasecsOopCss
   
   public function __toString()
   {
+    $this->_compressSelectors();
     return implode("\n\n", $this->_selectors);
+  }
+  
+  protected function _compressSelectors()
+  {
+    $selectors = array();
+    $catalog = array();
+    foreach($this->_selectors as $s)
+    {
+      $key = array_search($s->stylesToString(), $catalog);
+      if(is_string($key))
+      {
+        $old_key = $key;
+        $key .= ", ".$s->getSelector();
+        $s->setSelector($key);
+        $selectors[$key] = $s;
+        unset($selectors[$old_key]);
+      }
+      else
+      {
+        $selectors[$s->getSelector()] = $s;
+        $catalog[$s->getSelector()] = $s->stylesToString();
+      }
+    }
+    $this->_selectors = $selectors;
   }
 }
 ?>
