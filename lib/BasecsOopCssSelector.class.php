@@ -18,63 +18,86 @@
  **/
 class BasecsOopCssSelector
 {
-  protected $selector         = null,
-            $errors           = array(),
-            $styles           = array();
+  protected $_selector         = null,
+            $_errors           = array(),
+            $_styles           = array();
             
   public function __construct()
   {
     $args = func_get_args();
-    $this->selector = $selector;
+    $this->_selector = ($args[0] != null) ? $args[0] : null;
   }
   
   public function getSelector()
   {
-    return $this->selector;
+    return $this->_selector;
   }
   
   public function addStyle()
   {
     $args = func_get_args();
-    switch(get_class_name($args[0]))
+    if(is_string($args[0]))
     {
-      case 'csOopCssStyle':
-        $this->styles[$args[0]->getProperty()] = $args[0];
-        break;
-      case 'String':
-        if(isset($args[0]) && isset($args[1]) && $args[0] != null && $args[1] != null)
-        {
-          $style = new csOopCssStyle($args[0], $args[1]);
-          $styles[$a]
-          return true;
-        }
-        else
-        {
-          $this->error = "Property and Value must be Strings!";
-          return false;
-        }
-        break;
+      if(isset($args[0]) && isset($args[1]) && $args[0] != null && $args[1] != null)
+      {
+        $style = new csOopCssStyle($args[0], $args[1]);
+        $this->_styles[$args[0]] = $style; 
+        return true;
+      }
+      else
+      {
+        $this->_errors[] = "Property and Value must be Strings!";
+        return false;
+      }
     }
-    
+    elseif(get_class($args[0]) == 'csOopCssStyle')
+    {
+      $this->_styles[$args[0]->getProperty()] = $args[0];
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  public function addStyles($styles = array())
+  {
+    foreach($styles as $s)
+    {
+      $this->addStyle($s);
+    }
   }
   
   public function removeStyle($property = '')
   {
-    if(isset($this->styles[$property]))
+    if(isset($this->_styles[$property]))
     {
-      unset($this->styles[$property]);
+      unset($this->_styles[$property]);
     }
   }
   
   public function getStyles()
   {
-    return $this->styles;
+    return $this->_styles;
+  }
+  
+  public function toArray()
+  {
+    $styles = array();
+    
+    foreach($this->_styles as $s)
+    {
+      $styles = array_merge($styles, $s->toArray());
+    }
+    
+    return array($this->_selector => $styles);
   }
   
   public function __toString()
   {
-    $out = $selector." {\n";
-    foreach($styles as $s)
+    $out = $this->_selector." {\n";
+    foreach($this->_styles as $s)
     {
       $out .= $s."\n";
     }

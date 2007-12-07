@@ -18,44 +18,44 @@
  **/
 class BasecsOopCssStyle
 {
-  protected $property         = '',
-            $value            = '';
+  protected $_property         = '',
+            $_value            = '';
   
   public function __construct()
   {
     $args = func_get_args();
-    $this->property = ($args[0] != null) ? $args[0] : '';
-    $this->value = ($args[1] != null) ? $args[1] : '';
+    $this->_property = ($args[0] != null) ? $args[0] : '';
+    $this->_value = ($args[1] != null) ? $args[1] : '';
   }
   
   public function setProperty($property='')
   {
-    $this->property = $property;
+    $this->_property = $property;
   }
   
   public function setValue($value='')
   {
-    $this->value = $value;
+    $this->_value = $value;
   }
   
   public function getProperty()
   {
-    return $this->property;
+    return $this->_property;
   }
   
   public function getValue()
   {
-    return $this->value;
+    return $this->_value;
   }
   
   public function toArray()
   {
-    return array($property => $value);
+    return array($this->_property => $this->_value);
   }
   
   public function __toString()
   {
-    return ($property != '') ? $property.': '.$value.';': '';
+    return ($this->_property != '') ? $this->_property.': '.$this->_value.';': '';
   }
 }
 ?>

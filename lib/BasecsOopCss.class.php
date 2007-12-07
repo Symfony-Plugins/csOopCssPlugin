@@ -18,39 +18,64 @@
  **/
 class BasecsOopCss
 {
-  protected $title            = 'style',
-            $selectors        = array();
+  protected $_title            = 'style',
+            $_selectors        = array();
   
   public function __construct($title = 'style')
   {
-    $this->title = $title;
+    $this->_title = $title;
   }
   
   public function getTitle()
   {
-    return $this->title;
+    return $this->_title;
   }
   
   public function addSelector()
   {
     $args = func_get_args();
-    switch(get_class_name($args[0]))
+    if(is_string($args[0]))
     {
-      case 'csOopCssSelector':
-        $this->selectors[$args[0]->getSelector()] = $args[0];
-        break;
-      case 'String':
-        $selector = new csOopCssSelector($args[0]);
-        $this->selectors[$args[0]] = $selector;
-        break;
+      $selector = new csOopCssSelector($args[0]);
+      $this->_selectors[$args[0]] = $selector;
+      return true;
+    }
+    elseif(get_class($args[0]) == 'csOopCssSelector')
+    {
+      $this->_selectors[$args[0]->getSelector()] = $args[0];
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  public function addSelectors($selectors = array())
+  {
+    foreach($selectors as $s)
+    {
+      $this->addSelector($s);
     }
   }
   
   public function getSelector($selector = '')
   {
-    if(isset($this->selectors[$selector]))
+    if(isset($this->_selectors[$selector]))
     {
-      return $this->selectors[$selector];
+      return $this->_selectors[$selector];
+    }
+    else
+    {
+      return null;
+    }
+  }
+  
+  public function hasSelector($selector = '')
+  {
+    if(isset($this->_selectors[$selector]))
+    {
+      return true;
     }
     else
     {
@@ -60,15 +85,15 @@ class BasecsOopCss
   
   public function removeSelector($selector = '')
   {
-    if(isset($this->selectors[$selector]))
+    if(isset($this->_selectors[$selector]))
     {
-      unset($this->selectors[$selector]);
+      unset($this->_selectors[$selector]);
     }
   }
   
   public function __toString()
   {
-    return implode("\n\n", $this->selectors);
+    return implode("\n\n", $this->_selectors);
   }
 }
 ?>

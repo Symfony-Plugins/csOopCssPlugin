@@ -15,7 +15,7 @@
  * @author    Josh R. Reynolds <reynoldsj@gmail.com>
  * @version   SVN: $Id:
  **/
-class csOopCssSelector extends BasecsCssSelector
+class csOopCssSelector extends BasecsOopCssSelector
 {
 
 }
